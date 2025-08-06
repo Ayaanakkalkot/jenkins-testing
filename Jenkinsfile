@@ -1,16 +1,15 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.10'  // or any version you need
+        }
+    }
 
     stages {
         stage('Setup') {
             steps {
-                echo 'Setting up...'
-                sh '''
-                    apt-get update
-                    apt-get install -y python3 python3-venv python3-pip
-                    python3 --version
-                    python3 -m venv venv
-                '''
+                echo 'Python Version:'
+                sh 'python --version'
             }
         }
 
@@ -18,9 +17,10 @@ pipeline {
             steps {
                 echo 'Running email validator...'
                 sh '''
-                    source venv/bin/activate
+                    python -m venv venv
+                    . venv/bin/activate
                     pip install -r requirements.txt
-                    python your_script.py
+                    python email_validator.py
                 '''
             }
         }
